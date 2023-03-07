@@ -1,3 +1,5 @@
 ---
-- ansible.builtin.import_tasks: gnome.yml
-- ansible.builtin.import_tasks: gsettings.yml
+- name: Import GNOME tasks
+  ansible.builtin.import_tasks: gnome.yml
+- name: Import dconf/GSettings tasks
+  ansible.builtin.import_tasks: gsettings.yml

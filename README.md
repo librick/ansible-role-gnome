@@ -1,4 +1,6 @@
 # Ansible Role: GNOME Desktop Environment
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
+
 This role installs and customizes the GNOME desktop environment on Debian-based Linux systems. It:
  - Ensures that the GNOME desktop environment is installed
  - Ensures that GNOME session manager is installed

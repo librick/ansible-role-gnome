@@ -25,6 +25,13 @@ See the docs for the [Ansible community.general.dconf module](https://docs.ansib
 Testing is performed using Molecule.  
 See the [molecule](./molecule/) directory for more information.
 
+## Linting
+Linting is done automatically via [https://pre-commit.com/](https://pre-commit.com/).  
+After setting up a virtual environment and installing `requirements.txt`, run  
+`pre-commit run --all-files`  
+See: https://github.com/ansible/ansible-lint  
+See: https://github.com/pre-commit/pre-commit
+
 ## Example Playbook
     - hosts: servers
       vars_files:

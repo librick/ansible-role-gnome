@@ -2,9 +2,7 @@
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 
 This role installs and customizes the GNOME desktop environment on Debian-based Linux systems. It:
- - Ensures that the GNOME desktop environment is installed
  - Ensures that GNOME session manager is installed
- - Ensures that GNOME display manager (GDM) is installed
  - Ensures that GNOME-related apt packages are installed
  - Ensures that *undesired* GNOME-related apt packages are *not* installed
  - Sets common GNOME settings via the GSettings API and dconf

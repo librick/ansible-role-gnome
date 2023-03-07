@@ -1,0 +1,9 @@
+# https://pre-commit.com/
+# https://www.ansible.com/blog/ansible-linting-with-github-actions
+# https://ansible-lint.readthedocs.io/configuring/#pre-commit-setup
+repos:
+- repo: https://github.com/ansible/ansible-lint.git
+  rev: v6.14.0
+  hooks:
+    - id: ansible-lint
+      files: \.(yaml|yml)$

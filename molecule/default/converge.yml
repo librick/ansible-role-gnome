@@ -1,0 +1,22 @@
+---
+# converge.yml is the playbook file that contains the call for your role.
+# Molecule will invoke this playbook with ansible-playbook and run it against an instance created by the driver.
+# See: https://molecule.readthedocs.io/en/latest/getting-started/#the-scenario-layout
+- name: Converge
+  hosts: all
+  gather_facts: false
+
+  pre_tasks:
+    - name: Update apt cache.
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 600
+      changed_when: false
+      become: true
+
+    - name: Debug, gnome_apt_packages_to_install
+      ansible.builtin.debug:
+        msg: "gnome_apt_packages_to_install: {{ gnome_apt_packages_to_install }}"
+      
+  roles:
+    - role: librick.gnome

@@ -1,0 +1,66 @@
+# The username of the user for which GNOME settings will be customized
+gnome_user: "{{ ansible_user }}"
+# The value with which to populate the $XDG_CONFIG_HOME environment variable
+# when installing GNOME for the user specified by gnome_user
+# See: https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html 
+gnome_xdg_config_home: "/home/{{ gnome_user }}/.config"
+# Disable the caps lock key in GNOME
+gnome_gsettings_disable_caps_lock: true
+# Disable automatic suspend when the device is plugged in
+gnome_gsettings_disable_auto_suspend_when_plugged_in: true
+# Disable animations in GNOME. I find this makes GNOME feel more responsive
+gnome_gsettings_disable_animation: true
+# Disable showing privacy-sensitive notifications on the GNOME lock screen
+gnome_gsettings_disable_sensitive_notifs_on_lock_screen: true
+# Within the GNOME file picker, list directories above files
+gnome_gsettings_sort_directories_before_files: true
+# Emulate right-click on laptop touchpads by pressing the right side of the touchpad
+gnome_gsettings_enable_laptop_touchpad_right_click: true # TODO
+# Disable app folders in the GNOME overview. I find them to be distracting
+gnome_gsettings_disable_app_folders_in_overview: true
+# Use 24-hour (rather than 12-hour) clock format throughout GNOME and related applications
+gnome_gsettings_use_24_hour_format: true
+# Set a custom GNOME interface font. E.g., "NotoSans Nerd Font 11"
+gnome_gsettings_interface_font_name: "Cantarell Regular"
+# Set a custom GNOME document font. E.g., "NotoSans Nerd Font 11"
+gnome_gsettings_document_font_name: "Sans Regular"
+# Set a custom GNOME monospace font. E.g., "Hack Nerd Font Mono Regular 11"
+gnome_gsettings_monospace_font_name: "Monospace Regular"
+# Show the current battery percentage in the GNOME desktop interface
+gnome_gsettings_show_battery_percentage: true
+
+# Apps to show in the GNOME dash; list items top-to-bottom appear left-to-right
+gnome_dash_apps:
+  - "org.gnome.Nautilus.desktop"
+  - "org.gnome.Calculator.desktop"
+
+# Debian packages that should be installed
+gnome_apt_packages_to_install:
+  - baobab # Disk usage analyzer; https://apps.gnome.org/en/app/org.gnome.baobab/
+  - cheese # Webcam application; https://apps.gnome.org/en/app/org.gnome.Cheese/
+  - d-feet # D-Bus object browser, viewer and debugger; https://packages.debian.org/unstable/d-feet
+  - dconf-editor # Editor for dconf database; https://apps.gnome.org/en/app/ca.desrt.dconf-editor/
+  - eog # Image viewer; https://apps.gnome.org/en/app/org.gnome.eog/
+  - evince # PDF viewer; https://wiki.gnome.org/Apps/Evince/
+  - gdm3 # GNOME display manager; https://en.wikipedia.org/wiki/GNOME_Display_Manager/
+  - gedit # Text editor; https://wiki.gnome.org/Apps/Gedit/
+  - gnome-calculator # https://apps.gnome.org/en/app/org.gnome.Calculator/
+  - gnome-disk-utility # https://wiki.gnome.org/Apps/Disks/
+  - gnome-font-viewer # https://apps.gnome.org/app/org.gnome.font-viewer/
+  - gnome-logs # https://apps.gnome.org/en/app/org.gnome.Logs/
+  - gnome-session # https://wiki.gnome.org/Projects/SessionManagement/
+  - gnome-software-plugin-flatpak # https://packages.debian.org/stretch/gnome-software-plugin-flatpak/
+  - gnome-system-monitor # https://apps.gnome.org/app/gnome-system-monitor/
+  - gnome-terminal # Terminal emulator; https://wiki.gnome.org/Apps/Terminal/
+  - gnome-tweaks # GUI for advanced GNOME settings; https://wiki.gnome.org/Apps/Tweaks/
+  - nautilus # File manager; https://apps.gnome.org/app/org.gnome.Nautilus/
+  - seahorse # Keyring manager, password manager; https://wiki.gnome.org/Apps/Seahorse/
+  - xdg-user-dirs # Tool for managing freedesktop.org user directories; https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
+
+# Debian packages that should be removed
+gnome_apt_packages_to_remove:
+  - gnome-console # Terminal emulator; https://apps.gnome.org/app/org.gnome.Console/
+  - gnome-text-editor # Text editor; https://apps.gnome.org/en/app/org.gnome.TextEditor/
+  - nautilus-extension-gnome-terminal
+  - rygel # Used for media sharing; https://wiki.archlinux.org/title/Rygel/
+  - mpv # Media player; https://celluloid-player.github.io/

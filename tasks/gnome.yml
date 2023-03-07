@@ -1,0 +1,113 @@
+---
+- name: Debug; print gnome_user.
+  ansible.builtin.debug:
+    msg: "Installing/configuring GNOME for user with username \"{{ gnome_user }}\""
+
+- name: Debug; print gnome_xdg_config_home.
+  ansible.builtin.debug:
+    msg: "Installing/configuring GNOME with XDG_CONFIG_HOME={{ gnome_xdg_config_home }}"
+
+- name: Ensure gnome_user group exists.
+  ansible.builtin.group:
+    name: "{{ gnome_user }}"
+    state: present
+  become: true
+  become_user: root
+
+- name: Ensure gnome_user user exists.
+  ansible.builtin.user:
+    append: true
+    create_home: true
+    group: "{{ gnome_user }}"
+    groups: "{{ gnome_user }}"
+    name: "{{ gnome_user }}"
+  become: true
+  become_user: root
+
+# The acl apt package includes the setfacl binary
+# which is required by Ansible to handle permissions when using
+# become_user with non-root users.
+# See: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#risks-of-becoming-an-unprivileged-user.
+# See: https://packages.debian.org/sid/acl
+- name: Ensure acl apt package is installed.
+  ansible.builtin.apt:
+    name: acl
+    state: present
+  become: true
+  become_user: root
+
+- name: Ensure gnome_xdg_config_home directory exists.
+  ansible.builtin.file:
+    group: "{{ gnome_user }}"
+    mode: 0755
+    owner: "{{ gnome_user }}"
+    path: "{{ gnome_xdg_config_home }}"
+    recurse: false
+    state: directory
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Ensure .face file is in place.
+  ansible.builtin.copy:
+    group: "{{ gnome_user }}"
+    mode: 0644
+    owner: "{{ gnome_user }}"
+    src: face.png
+    dest: "{{ gnome_xdg_config_home }}/.face"
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Print disk usage info to stdout.
+  ansible.builtin.command: "df -h /"
+  register: diskusage
+  changed_when: false
+
+- name: Print disk usage info.
+  ansible.builtin.debug:
+    msg: "{{ diskusage.stdout }}"
+
+- name: Ensure gnome-shell apt package is installed.
+  ansible.builtin.apt:
+    name: gnome-shell
+    install_recommends: false
+    state: present
+    update_cache: true
+  become: true
+  become_user: root
+  # See: https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_async.html
+  async: 900
+  poll: 5
+
+- name: Ensure wanted gnome apt packages are installed.
+  ansible.builtin.apt:
+    name: "{{ gnome_apt_packages_to_install }}"
+    state: present
+    update_cache: yes
+  become: true
+  become_user: root
+
+- name: Ensure unwanted gnome apt packages are not installed.
+  ansible.builtin.apt:
+    name: "{{ gnome_apt_packages_to_remove }}"
+    state: absent
+    autoremove: true
+    purge: true
+  become: true
+  become_user: root
+
+- name: Get current systemd default.
+  # Intentionally use `command` rather than the `systemd` built-in
+  # See: https://github.com/ansible/ansible/issues/65785
+  # noqa: command-instead-of-module
+  ansible.builtin.command:
+    cmd: "systemctl get-default"
+  changed_when: false
+  register: systemdefault
+
+- name: Set systemd default to graphical target.
+  # Intentionally use `command` rather than the `systemd` built-in
+  # See: https://github.com/ansible/ansible/issues/65785
+  ansible.builtin.command:
+    cmd: "systemctl set-default graphical.target"
+  when: "'graphical' not in systemdefault.stdout"
+  changed_when: "'graphical' not in systemdefault.stdout"

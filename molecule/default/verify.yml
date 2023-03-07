@@ -1,0 +1,59 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+
+  tasks:
+  - name: Assert sensitive lock screen notifications disabled via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.desktop.notifications show-in-lock-screen
+    changed_when: false
+    register: gsettings_show_in_lock_screen_reg
+    failed_when: gsettings_show_in_lock_screen_reg.stdout != "false"
+    become: true
+    become_user: "{{ gnome_user }}"
+
+  - name: Assert caps lock disabled via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.desktop.input-sources xkb-options
+    changed_when: false
+    register: gsettings_caps_lock_reg
+    failed_when: gsettings_caps_lock_reg.stdout != "['caps:none']"
+    become: true
+    become_user: "{{ gnome_user }}"
+
+  - name: Assert gnome-calculator in "advanced" mode via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.calculator button-mode
+    changed_when: false
+    register: gsettings_caps_lock_reg
+    failed_when: gsettings_caps_lock_reg.stdout != "'advanced'"
+    become: true
+    become_user: "{{ gnome_user }}"
+
+  - name: Assert correct font-name via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.desktop.interface font-name
+    changed_when: false
+    register: gsettings_interface_name_reg
+    failed_when: gsettings_interface_name_reg.stdout != "'my fake interface font'"
+    become: true
+    become_user: "{{ gnome_user }}"
+
+  - name: Assert correct document-font-name via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.desktop.interface document-font-name
+    changed_when: false
+    register: gsettings_document_name_reg
+    failed_when: gsettings_document_name_reg.stdout != "'my fake document font'"
+    become: true
+    become_user: "{{ gnome_user }}"
+
+  - name: Assert correct monospace-font-name via gsettings.
+    ansible.builtin.command:
+      cmd: gsettings get org.gnome.desktop.interface monospace-font-name
+    changed_when: false
+    register: gsettings_monospace_name_reg
+    failed_when: gsettings_monospace_name_reg.stdout != "'my fake monospace font'"
+    become: true
+    become_user: "{{ gnome_user }}"

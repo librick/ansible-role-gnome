@@ -1,0 +1,3 @@
+---
+- ansible.builtin.import_tasks: gnome.yml
+- ansible.builtin.import_tasks: gsettings.yml

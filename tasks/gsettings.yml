@@ -1,0 +1,215 @@
+---
+- name: Ensure dconf-related apt packages are installed.
+  ansible.builtin.apt:
+    name:
+      - dconf-cli
+      - dconf-service
+      # The following package contains the gsettings binary
+      # You can verify this by running
+      # apt-file search --regexp '/gsettings$'
+      - libglib2.0-bin
+    state: present
+  become: true
+  become_user: root
+
+- name: Ensure python3-psutil apt package is installed.
+  ansible.builtin.apt:
+    name: python3-psutil
+    state: present
+  become: true
+  become_user: root
+
+- name: Disable caps lock.
+  community.general.dconf:
+    key: "/org/gnome/desktop/input-sources/xkb-options"
+    value: "{{ (gnome_gsettings_disable_caps_lock) | ternary(\"['caps:none']\", \"[]\") }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Disable automatic suspend when plugged in.
+  community.general.dconf:
+    key: "/org/gnome/settings-daemon/plugins/power/sleep-inactive-ac-type"
+    value: "{{ (gnome_gsettings_disable_auto_suspend_when_plugged_in) | ternary(\"'nothing'\", \"'suspend'\") }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Disable animations in gnome shell.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/enable-animations"
+    value: "{{ (gnome_gsettings_disable_animation) | ternary('false', 'true') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Disable displaying notifications on the lock screen.
+  community.general.dconf:
+    key: "/org/gnome/desktop/notifications/show-in-lock-screen"
+    value: "{{ (gnome_gsettings_disable_sensitive_notifs_on_lock_screen) | ternary('false', 'true') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Sort directories before files.
+  community.general.dconf:
+    key: "/org/gtk/Settings/FileChooser/sort-directories-first"
+    value: "{{ (gnome_gsettings_sort_directories_before_files) | ternary('true', 'false') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Right click by clicking the right side of the touchpad on laptops.
+  community.general.dconf:
+    key: "/org/gnome/desktop/peripherals/touchpad/click-method"
+    value: "'areas'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Disable grouping apps into folders in the overview.
+  community.general.dconf:
+    key: "/org/gnome/desktop/app-folders/folder-children"
+    value: "\"[]\""
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+  # This key/value pair (org.gnome.desktop.app-folders folder-children) changes whenever
+  # GNOME is reinstalled. This causes Molecule idempotence checks to fail.
+  # In lieu of a more comprehensive fix, I just disabled change tracking for this task.
+  changed_when: false
+
+- name: Set gnome calculator to "advanced" mode.
+  community.general.dconf:
+    key: "/org/gnome/calculator/button-mode"
+    value: "'advanced'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set gnome calculator to disable currency conversion rate requests.
+  community.general.dconf:
+    key: "/org/gnome/calculator/refresh-interval"
+    value: "0"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Disable automatic timezones.
+  community.general.dconf:
+    key: "/org/gnome/desktop/datetime/automatic-timezone"
+    value: "false"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Use 24 hour clock format.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/clock-format"
+    value: "{{ (gnome_gsettings_use_24_hour_format) | ternary('24', '12') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Use 24 hour clock format in file chooser.
+  community.general.dconf:
+    key: "/org/gtk/Settings/FileChooser/clock-format"
+    value: "{{ (gnome_gsettings_use_24_hour_format) | ternary('24', '12') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Show the current day of the week.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/clock-show-weekday"
+    value: "true"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Use dark color scheme.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/color-scheme"
+    value: "'prefer-dark'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set window buttons.
+  community.general.dconf:
+    key: "/org/gnome/desktop/wm/preferences/button-layout"
+    value: "':close'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set font antialiasing to subpixel (rgba).
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/font-antialiasing"
+    value: "'rgba'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set GNOME interface font.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/font-name"
+    value: "'{{ gnome_gsettings_interface_font_name }}'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set GNOME document font.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/document-font-name"
+    value: "'{{ gnome_gsettings_document_font_name }}'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set GNOME monospace font.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/monospace-font-name"
+    value: "'{{ gnome_gsettings_monospace_font_name }}'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Show battery percentage.
+  community.general.dconf:
+    key: "/org/gnome/desktop/interface/show-battery-percentage"
+    value: "{{ (gnome_gsettings_show_battery_percentage) | ternary('true', 'false') }}"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Use small icons in Nautilus.
+  community.general.dconf:
+    key: "/org/gnome/nautilus/icon-view/default-zoom-level"
+    value: "'small'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Use list view in Nautilus.
+  community.general.dconf:
+    key: "/org/gnome/nautilus/preferences/default-folder-viewer"
+    value: "'list-view'"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Show hidden files in Nautilus.
+  community.general.dconf:
+    key: "/org/gnome/nautilus/preferences/show-hidden-files"
+    value: "true"
+    state: present
+  become: true
+  become_user: "{{ gnome_user }}"
+
+- name: Set applications in GNOME dash.
+  community.general.dconf:
+    key: "/org/gnome/shell/favorite-apps"
+    value: "[{{ '\"' + gnome_dash_apps | join('\", \"') + '\"' }}]"
+  become: true
+  become_user: "{{ gnome_user }}"

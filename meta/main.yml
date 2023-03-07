@@ -1,0 +1,23 @@
+---
+dependencies: []
+galaxy_info:
+  role_name: gnome
+  author: librick
+  description: GNOME desktop environment installation and configuration.
+  company: "Perceptron, LLC"
+  license: "license (MIT)"
+  min_ansible_version: "2.14"
+  platforms:
+    - name: Debian
+      versions:
+        - all
+    - name: Ubuntu
+      versions:
+        - all
+  galaxy_tags:
+    - gnome
+    - gsettings
+    - dconf
+    - automatic
+    - updates
+    - apt

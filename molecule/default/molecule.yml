@@ -1,0 +1,87 @@
+---
+# molecule.yml is the central configuration entrypoint for Molecule.
+# With this file, you can configure each tool that Molecule will employ when testing your role.
+# See: https://molecule.readthedocs.io/en/latest/getting-started/#the-scenario-layout
+role_name_check: 1
+dependency:
+  name: galaxy
+
+driver:
+  # Use the Molecule Vagrant driver
+  # See: https://github.com/ansible-community/molecule-plugins/tree/main/doc/vagrant.
+  name: vagrant
+  provider:
+    name: libvirt
+  cachier: machine
+  parallel: true
+
+lint: | # TODO: Fix -x skip_list
+  set -e
+  yamllint .
+  ansible-lint -x "name[missing]"
+
+platforms:
+  - name: instance
+    config_options:
+      # These options are for Vagrant, setting these is akin to setting options in a Vagrantfile.
+      # See: https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings (i.e., config.vm)
+      # See: https://developer.hashicorp.com/vagrant/docs/vagrantfile/ssh_settings (i.e., config.ssh)
+      # The SSH settings here are for use by *Vagrant* to access the machine, not by *Ansible*.
+      # Because we never use `vagrant ssh` when testing via Molecule, these SSH settings don't really matter.
+      ssh.remote_user: 'vagrant-ssh--not-applicable'
+      # Disable synced folders between the host and guest(s)
+      # https://developer.hashicorp.com/vagrant/docs/vagrantfile/machine_settings#config-vm-allow_fstab_modification
+      vm.allow_fstab_modification: false
+
+    # Molecule has "drivers", Vagrant has "boxes".
+    # Use Vagrant to spin up VMs (via Molecule's Vagrant driver).
+    # Debian offers official Debian base boxes for Vagrant,
+    # see: https://wiki.debian.org/Teams/Cloud/VagrantBaseBoxes.
+    # Also see:  https://app.vagrantup.com/debian.
+    #
+    # This section contains configuration options for the Molecule Vagrant driver,
+    # which in turn contains configuration options for the Vagrant box.
+    # Finally, the Vagrant box itself is provisioned using Ansible.
+    #
+    # By default, the debian/testing64 Vagrant box has a non-root user called "vagrant".
+    # This follows from base box recommendations: https://developer.hashicorp.com/vagrant/docs/boxes/base.
+    # This can be verified by running the following commmands on the host (in some arbitrary directory):
+    #   vagrant init debian/testing64
+    #   vagrant up
+    #   vagrant ssh
+    #   > sudo su
+    #   > cat /etc/passwd | grep home
+    # You should see "vagrant:x:1000:1000::/home/vagrant:/bin/bash".
+    #
+    box: debian/testing64
+    box_version: 20230226.1
+    memory: 2048
+    cpus: 1
+
+# Molecule only supports one provisioner: Ansible.
+# Molecule's provisioner manages the instances lifecycle.
+# https://molecule.readthedocs.io/en/latest/configuration/#molecule.provisioner.ansible.Ansible
+provisioner:
+  name: ansible
+  #env:
+    # Useful environment vars for debugging
+    #ANSIBLE_DEBUG: 1
+    #ANSIBLE_VERBOSITY: 3
+  inventory:
+    host_vars:
+      instance:
+        gnome_user: suzanne # See: https://en.wikipedia.org/wiki/Blender_(software)#Suzanne
+        gnome_apt_packages_to_install:
+          # Ensure that we install a few foundational GNOME apt packages.
+          # If GNOME isn't installed, assertions/verification may fail due to missing gsetting schemas,
+          # with the message "No schemas installed" output to stderr.
+          - gnome-session
+          - gnome-calculator
+        # The following font names are arbitrary;
+        # they just allow us to verify that custom fonts are set correctly.
+        gnome_gsettings_interface_font_name: "my fake interface font"
+        gnome_gsettings_document_font_name: "my fake document font"
+        gnome_gsettings_monospace_font_name: "my fake monospace font"
+
+  playbooks:
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}

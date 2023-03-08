@@ -58,9 +58,5 @@ gnome_apt_packages_to_install:
   - xdg-user-dirs # Tool for managing freedesktop.org user directories; https://www.freedesktop.org/wiki/Software/xdg-user-dirs/
 
 # Debian packages that should be removed
-gnome_apt_packages_to_remove:
-  - gnome-console # Terminal emulator; https://apps.gnome.org/app/org.gnome.Console/
-  - gnome-text-editor # Text editor; https://apps.gnome.org/en/app/org.gnome.TextEditor/
-  - nautilus-extension-gnome-terminal
-  - rygel # Used for media sharing; https://wiki.archlinux.org/title/Rygel/
-  - mpv # Media player; https://celluloid-player.github.io/
+gnome_apt_packages_to_remove: []
+

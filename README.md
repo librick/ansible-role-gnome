@@ -8,7 +8,7 @@ This role installs and customizes the GNOME desktop environment on Debian-based 
  - Sets common GNOME settings via the GSettings API and dconf
 
 ## Role Variables
-See `defaults/main.yml` for a comprehensive list of role variables.  
+See [defaults/main.yml](./defaults/main.yml) for a comprehensive list of role variables.  
 Some of the most pertinent variables are:
 - `gnome_user`
 - `gnome_xdg_config_home`
